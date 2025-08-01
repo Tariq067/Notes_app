@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notes App</title>
+    <link rel="stylesheet" href="images/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1><img src="images/notes.png" alt=""> Notes </h1>    
+        <button><img src="images/edit.png" alt=""> Create Notes </button>
+        <div class="notes-container"></div>
+    </div>
+    <script>
+    const notesContainer = document.querySelector('.notes-container');
+    const createButton = document.querySelector('button');
+
+    function updateStorage() {
+        localStorage.setItem('notes', notesContainer.innerHTML);
+    }
+
+    function attachNoteEvents(note) {
+        const inputBox = note.querySelector('.input-box');
+        const deleteIcon = note.querySelector('img');
+        inputBox.onkeyup = updateStorage;
+        deleteIcon.addEventListener('click', () => {
+            note.remove();
+            updateStorage();
+        });
+    }
+
+    function loadNotes() {
+        notesContainer.innerHTML = localStorage.getItem('notes') || '';
+        // Attach events to loaded notes
+        notesContainer.querySelectorAll('.note').forEach(attachNoteEvents);
+    }
+
+    createButton.addEventListener('click', () => {
+        const note = document.createElement('div');
+        note.classList.add('note');
+        note.innerHTML = `<p contenteditable="true" class="input-box">
+                            <img src="images/delete.png" alt="">
+                          </p>`;
+        notesContainer.appendChild(note);
+        attachNoteEvents(note);
+        updateStorage();
+    });
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && document.activeElement.classList.contains('input-box')) {
+            document.execCommand('insertLineBreak');
+            e.preventDefault();
+        }
+    });
+
+    loadNotes();
+    </script>
+</body>
+</html>
