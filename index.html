@@ -12,7 +12,7 @@
         <button><img src="images/edit.png" alt=""> Create Notes </button>
         <div class="notes-container"></div>
     </div>
-    <script>
+   <script>
     const notesContainer = document.querySelector('.notes-container');
     const createButton = document.querySelector('button');
 
@@ -23,11 +23,15 @@
     function attachNoteEvents(note) {
         const inputBox = note.querySelector('.input-box');
         const deleteIcon = note.querySelector('img');
-        inputBox.onkeyup = updateStorage;
-        deleteIcon.addEventListener('click', () => {
-            note.remove();
-            updateStorage();
-        });
+        if (inputBox) inputBox.onkeyup = updateStorage;
+        if (deleteIcon) {
+            // Remove previous listeners to avoid duplicates
+            deleteIcon.onclick = null;
+            deleteIcon.addEventListener('click', () => {
+                note.remove();
+                updateStorage();
+            });
+        }
     }
 
     function loadNotes() {
@@ -40,8 +44,7 @@
         const note = document.createElement('div');
         note.classList.add('note');
         note.innerHTML = `<p contenteditable="true" class="input-box">
-                            <img src="images/delete.png" alt="">
-                          </p>`;
+                          <img src="images/delete.png" alt=""> </p>`;
         notesContainer.appendChild(note);
         attachNoteEvents(note);
         updateStorage();
@@ -55,6 +58,6 @@
     });
 
     loadNotes();
-    </script>
+</script>
 </body>
 </html>
